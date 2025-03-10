@@ -1,5 +1,6 @@
 package com.beshoy.abroad.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,7 +80,12 @@ fun ShowNewsList(
 
                 is Resource.Success -> {
                     val articles = newsList.data.articles
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         items(articles)
                         { it ->
                             NewsItem(it)
