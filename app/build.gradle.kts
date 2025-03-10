@@ -1,12 +1,12 @@
 import java.util.Properties
 
 plugins {
-        alias(libs.plugins.android.application)
-        alias(libs.plugins.jetbrains.kotlin.android)
-        alias(libs.plugins.hilt)
-        alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.kapt)
 //        id("kotlin-parcelize")
-    }
+}
 
 android {
     namespace = "com.beshoy.abroad"
@@ -53,6 +53,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/LICENSE.md",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE.md",
+                "META-INF/NOTICE.txt",
+                "META-INF/DEPENDENCIES",
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "META-INF/LICENSE-notice.md" // Add this line
+            )
+        }
+    }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -63,11 +78,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+
 //    kotlinOptions {
 //        freeCompilerArgs += "-Xplugin=kotlin-parcelize"
 //    }
@@ -90,6 +101,8 @@ dependencies {
     // Hilt dependencies
     implementation(libs.hilt)
     implementation(libs.firebase.storage.ktx)
+//    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+//    testImplementation("junit:junit:4.12")
     kapt(libs.hilt.compiler) // KAPT should be used for Hilt compiler
 
     apply(plugin = "kotlin-parcelize")
@@ -104,14 +117,19 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
-
+    implementation(libs.coil)
 
     // Testing dependencies
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.mockk.android)
+
 }

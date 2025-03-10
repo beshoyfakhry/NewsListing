@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
@@ -13,9 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.beshoy.abroad.R
 import com.beshoy.abroad.data.domain.NewsObject
 
@@ -26,21 +33,37 @@ fun NewsItem(item: NewsObject, onItemClicked: (NewsObject) -> Unit = {}) {
 
     Card() {
 
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
                 .clickable {
                     onItemClicked(item)
                 },
-            verticalAlignment = Alignment.CenterVertically
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_image_24),
-                contentDescription = "News main image",
-                modifier = Modifier
-                    .padding(8.dp)
-                    .size(50.dp)
+//            AsyncImage(
+//                model = ImageRequest.Builder(LocalContext.current)
+//                    .data(item.urlToImage)
+//                    .crossfade(true)
+//                    .build(),
+//                contentDescription = "News Image",
+//                modifier = Modifier
+//                    .fillMaxWidth() // Make the image fit the width of the item
+//                    .height(100.dp), // Adjust height for the image
+//                contentScale = ContentScale.Crop // Crop to fit the container (it will not stretch)
+//            )
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(item.urlToImage) // URL of the image
+                    .crossfade(true)
+                    .placeholder(coil.base.R.drawable.ic_100tb) // Show placeholder while loading
+                    .error(androidx.loader.R.drawable.notification_bg_low) // Show error image if loading fails
+                    .scale(Scale.FIT) // Control the scaling of the image
+                    .build(),
+                contentDescription = "Image from URL",
+                modifier = Modifier.fillMaxWidth()
             )
             Column {
                 item.title?.let { Text(text = it) }

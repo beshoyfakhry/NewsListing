@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -60,25 +61,26 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppScaffold(isConnected: Boolean) {
+    val navController = rememberNavController()
     Scaffold(
-        topBar = { TopAppBarWithConnectionStatus(isConnected = isConnected) }
+        topBar = { TopAppBarWithConnectionStatus(navController, isConnected = isConnected) }
 
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.Center
+                .padding(paddingValues)
+
         ) {
 
-            MainNavigation()
+            MainNavigation(navController)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarWithConnectionStatus(isConnected: Boolean) {
+fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected: Boolean) {
     TopAppBar(
         title = {
             Text(
@@ -86,36 +88,34 @@ fun TopAppBarWithConnectionStatus(isConnected: Boolean) {
 
             )
         }, actions = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                navController.navigate("SearchNewsListing")
+            }) {
                 Icon(
                     imageVector = Icons.Default.Search, // Replace with the icon you want
                     contentDescription = "Refresh"
                 )
             }
         }
-//        ,
-//        modifier = Modifier.heightIn(min = 10.dp, max = 10.dp)
-    ) // Customize the height)
+    )
 }
 
-fun search()
-{}
+
 @Composable
-fun MainNavigation() {
-    val navController = rememberNavController() // Navigation controller
+fun MainNavigation(navController: NavHostController) {
+
     val newsViewMode: NewsViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = "SplashScreen") {
 
-        composable("NewsListing") { NewsListingScreen(navController) }
+        composable("NewsListing") { NewsListingScreen(navController, isSearch = false) }
         composable("newsDetail") {
             val news =
-                navController.previousBackStackEntry?.savedStateHandle?.get<NewsObject>(
-                    "news"
-                )
+                navController.previousBackStackEntry?.savedStateHandle?.get<NewsObject>("news")
             news?.let { NewsDetailsScreen(it) }
+
         }
         composable("SplashScreen") { SplashScreen(navController) }
-
+        composable("SearchNewsListing") { NewsListingScreen(navController, true) }
     }
 }

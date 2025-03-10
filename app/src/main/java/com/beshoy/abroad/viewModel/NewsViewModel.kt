@@ -1,5 +1,6 @@
 package com.beshoy.abroad.viewModel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.beshoy.abroad.data.domain.NewsObject
@@ -13,21 +14,32 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(true)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading
 
     private val _newsList = MutableStateFlow<List<NewsObject>>(emptyList())
     val newsList: StateFlow<List<NewsObject>> = _newsList
 
+    var searchText = mutableStateOf("")
+        private set
 
-    init {
-        getNews()
+    fun onSearchTextChanged(text: String) {
+        searchText.value = text
+        if (text.length >= 3) {
+            getNews(text)
+        } else if (text.isEmpty()) {
+            getNews()
+        }
     }
 
-    private fun getNews() {
-        viewModelScope.launch {
+    init {
+//        getNews()
+    }
 
-            _newsList.value = newsRepo.getTopHeadlines().articles
+    fun getNews(query: String? = null) {
+        viewModelScope.launch {
+            isLoading.value = true
+            _newsList.value = newsRepo.getEverything(query).articles
             _isLoading.value = false
         }
 

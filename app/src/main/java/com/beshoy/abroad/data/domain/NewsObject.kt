@@ -6,12 +6,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NewsObject(
-    var author: String,
-    var title: String? = "Deafult message",
-    var description: String? = "",
-    var urlToImage: String,
-    var publishedAt: String,
-    var content: String? = "Default meessage"
+    var author: String?,
+    var title: String?,
+    var description: String?,
+    var urlToImage: String?,
+    var publishedAt: String?,
+    var content: String?
 ) : Parcelable
 
 

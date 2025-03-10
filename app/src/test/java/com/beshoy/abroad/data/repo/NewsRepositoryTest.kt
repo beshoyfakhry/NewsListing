@@ -9,6 +9,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+
 import org.junit.Before
 import org.junit.Test
 
@@ -22,7 +23,7 @@ class NewsRepositoryTest {
 
     @Before
     fun setup() {
-        mockApi = mockk()  // ✅ Fix: Properly initialize mockApi
+        mockApi = mockk<NewsApi>()
         repository = NewsRepository(mockApi)
     }
 
@@ -30,13 +31,12 @@ class NewsRepositoryTest {
     fun fetchNews() = runTest {
         val mockArticles = listOf(NewsObject("Breaking News", "Some description", "", "", "", ""))
 
-        // ✅ Fix: Use `any()` instead of hardcoding "bitcoin"
         coEvery { mockApi.getEverything(any()) } returns NewsResponse("", 1, mockArticles)
 
-        val result = repository.getEverything("bitcoin") // ✅ Fix: Ensure we pass query
+        val result = repository.getEverything("bitcoin").articles
 
-        assertEquals(1, result.articles.size)
-        assertEquals("Breaking News", result.articles[0].title)
+        assertEquals(1, result.size)
+        assertEquals("Breaking News", result[0].author)
     }
 
     @Test

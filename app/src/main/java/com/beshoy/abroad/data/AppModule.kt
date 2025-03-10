@@ -1,7 +1,6 @@
 package com.beshoy.abroad.data
 
-import com.beshoy.abroad.data.repo.NewsAPI
-import com.beshoy.abroad.utils.NetworkConnectionService
+import com.beshoy.abroad.data.repo.NewsApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-    val apiBaseUrl = "https://newsapi.org/"
+    private val apiBaseUrl = "https://newsapi.org/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
@@ -41,8 +40,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideNewsAPI(retrofit: Retrofit): NewsAPI {
-        return retrofit.create(NewsAPI::class.java)
+    fun provideNewsAPI(retrofit: Retrofit): NewsApi {
+        return retrofit.create(NewsApi::class.java)
     }
 
 //    @Provides
