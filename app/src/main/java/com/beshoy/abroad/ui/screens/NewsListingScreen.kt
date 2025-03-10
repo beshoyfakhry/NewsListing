@@ -63,7 +63,7 @@ fun ShowNewsList(
 
                 OutlinedTextField(
                     value = newsViewModel.searchText.value,
-                   onValueChange = { newsViewModel.onSearchTextChanged(it) },
+                    onValueChange = { newsViewModel.onSearchTextChanged(it) },
                     label = { Text("Search News") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
@@ -74,36 +74,33 @@ fun ShowNewsList(
             when (newsList) {
                 is Resource.Loading -> CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Black.copy(alpha = 0.3f)  // Semi-transparent black
-                ) // Show loading spinner
+                    color = Color.Black.copy(alpha = 0.3f)
+                )
+
                 is Resource.Success -> {
-                    val articles = (newsList as Resource.Success<NewsResponse>).data.articles
+                    val articles = newsList.data.articles
                     LazyColumn {
                         items(articles)
                         { it ->
                             NewsItem(it)
-
                             {
                                 navController.currentBackStackEntry?.savedStateHandle?.set(
                                     "news",
                                     it
                                 )
                                 navController.navigate("newsDetail")
-
                             }
                         }
                     }
                 }
 
                 is Resource.Error -> {
-                    Text("Error: ${(newsList as Resource.Error).message}")
+                    Text("Error: ${newsList.message}")
                 }
             }
 
         }
     }
-
-
 }
 
 @Preview(showBackground = true)
