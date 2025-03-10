@@ -2,17 +2,15 @@ import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
 import com.beshoy.abroad.data.repo.NewsApi
 import com.beshoy.abroad.data.repo.NewsRepository
+import com.beshoy.abroad.data.repo.Resource
 import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.mockkClass
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-
 import org.junit.Before
 import org.junit.Test
-
 
 
 @ExperimentalCoroutinesApi
@@ -33,10 +31,10 @@ class NewsRepositoryTest {
 
         coEvery { mockApi.getEverything(any()) } returns NewsResponse("", 1, mockArticles)
 
-        val result = repository.getEverything("bitcoin").articles
+        val result = repository.getEverything("bitcoin")
 
-        assertEquals(1, result.size)
-        assertEquals("Breaking News", result[0].author)
+        assertEquals(1, (result as Resource.Success).data)
+        assertEquals("Breaking News", result.data.articles[0].author)
     }
 
     @Test

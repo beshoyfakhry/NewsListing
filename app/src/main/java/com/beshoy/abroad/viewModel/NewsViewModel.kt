@@ -4,7 +4,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.beshoy.abroad.data.domain.NewsObject
+import com.beshoy.abroad.data.domain.NewsResponse
 import com.beshoy.abroad.data.repo.NewsRepository
+import com.beshoy.abroad.data.repo.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +19,8 @@ class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading
 
-    private val _newsList = MutableStateFlow<List<NewsObject>>(emptyList())
-    val newsList: StateFlow<List<NewsObject>> = _newsList
+    private val _newsList = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading)
+    val newsList: StateFlow<Resource<NewsResponse>> = _newsList
 
     var searchText = mutableStateOf("")
         private set
@@ -38,9 +40,8 @@ class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : 
 
     fun getNews(query: String? = null) {
         viewModelScope.launch {
-            isLoading.value = true
-            _newsList.value = newsRepo.getEverything(query).articles
-            _isLoading.value = false
+
+            _newsList.value = newsRepo.getEverything(query)
         }
 
     }

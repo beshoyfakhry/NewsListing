@@ -1,6 +1,5 @@
 package com.beshoy.abroad.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +12,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +23,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
+import com.beshoy.abroad.data.domain.NewsResponse
+import com.beshoy.abroad.data.repo.Resource
 import com.beshoy.abroad.ui.components.NewsItem
 import com.beshoy.abroad.viewModel.NewsViewModel
 
@@ -33,14 +32,13 @@ import com.beshoy.abroad.viewModel.NewsViewModel
 fun NewsListingScreen(navController: NavController, isSearch: Boolean = false) {
 
     val newsViewModel: NewsViewModel = hiltViewModel()
-    val isLoading = newsViewModel.isLoading.collectAsState()
+
     val newsList = newsViewModel.newsList.collectAsState()
     if (!isSearch) {
         newsViewModel.getNews()
     }
     ShowNewsList(
         newsViewModel,
-        isLoading = isLoading.value,
         isSearch = isSearch,
         newsList = newsList.value,
         navController = navController
@@ -50,27 +48,22 @@ fun NewsListingScreen(navController: NavController, isSearch: Boolean = false) {
 @Composable
 fun ShowNewsList(
     newsViewModel: NewsViewModel,
-    isLoading: Boolean,
+
     isSearch: Boolean,
-    newsList: List<NewsObject>,
+    newsList: Resource<NewsResponse>,
     navController: NavController
 ) {
 
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = Color.Black.copy(alpha = 0.3f)  // Semi-transparent black
-            )
-        }
+
 //        else {
         Column(modifier = Modifier.padding(8.dp)) {
             if (isSearch) {
 
                 OutlinedTextField(
                     value = newsViewModel.searchText.value,
-                    onValueChange = { newsViewModel.onSearchTextChanged(it) },
+                   onValueChange = { newsViewModel.onSearchTextChanged(it) },
                     label = { Text("Search News") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
@@ -78,25 +71,35 @@ fun ShowNewsList(
 
 
             }
+            when (newsList) {
+                is Resource.Loading -> CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    color = Color.Black.copy(alpha = 0.3f)  // Semi-transparent black
+                ) // Show loading spinner
+                is Resource.Success -> {
+                    val articles = (newsList as Resource.Success<NewsResponse>).data.articles
+                    LazyColumn {
+                        items(articles)
+                        { it ->
+                            NewsItem(it)
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(newsList)
-                { it ->
-                    NewsItem(it)
+                            {
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    "news",
+                                    it
+                                )
+                                navController.navigate("newsDetail")
 
-                    {
-                        navController.currentBackStackEntry?.savedStateHandle?.set("news", it)
-                        navController.navigate("newsDetail")
-
+                            }
+                        }
                     }
                 }
+
+                is Resource.Error -> {
+                    Text("Error: ${(newsList as Resource.Error).message}")
+                }
             }
-//            }
+
         }
     }
 
