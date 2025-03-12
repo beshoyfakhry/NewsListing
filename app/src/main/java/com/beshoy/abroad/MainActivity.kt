@@ -43,17 +43,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AbroadTheme {
-
                 val networkViewModel: NetworkViewModel = hiltViewModel()
                 val isConnected by networkViewModel.isConnected.collectAsState(initial = false)
-
                 networkViewModel.registerNetworkCallback()
-
                 AppScaffold(isConnected)
-
-
             }
-
         }
     }
 }
@@ -72,7 +66,6 @@ fun AppScaffold(isConnected: Boolean) {
                 .padding(paddingValues)
 
         ) {
-
             MainNavigation(navController)
         }
     }
@@ -85,7 +78,6 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
         title = {
             Text(
                 text = if (isConnected) "Connected ✅" else "No Internet ❌"
-
             )
         }, actions = {
             IconButton(onClick = {
@@ -103,9 +95,6 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
-
-    val newsViewMode: NewsViewModel = hiltViewModel()
-
     NavHost(navController = navController, startDestination = "SplashScreen") {
 
         composable("NewsListing") { NewsListingScreen(navController, isSearch = false) }

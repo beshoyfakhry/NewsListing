@@ -16,35 +16,20 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading
-
-    private val _newsList = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading)
-    val newsList: StateFlow<Resource<NewsResponse>> = _newsList
-
-    var searchText = mutableStateOf("")
-        private set
+    private val _newsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading)
+    val newsState: StateFlow<Resource<NewsResponse>> = _newsState
 
     fun onSearchTextChanged(text: String) {
-        searchText.value = text
         if (text.length >= 3) {
             getNews(text)
-        } else if (text.isEmpty()) {
-            getNews()
         }
     }
 
-    init {
-//        getNews()
-    }
-
-    fun getNews(query: String? = null) {
-        viewModelScope.launch {
-
-            _newsList.value = newsRepo.getEverything(query)
+    fun getNews(query: String) {
+        if (query.isNotEmpty()) {
+            viewModelScope.launch {
+                _newsState.value = newsRepo.getEverything(query)
+            }
         }
-
     }
-
-
 }

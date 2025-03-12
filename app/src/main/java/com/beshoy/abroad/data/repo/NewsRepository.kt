@@ -1,20 +1,17 @@
 package com.beshoy.abroad.data.repo
 
+import android.util.Log
 import com.beshoy.abroad.data.domain.NewsResponse
 import javax.inject.Inject
 
 class NewsRepository @Inject constructor(private val api: NewsApi) {
 
-
-    suspend fun getEverything(searchQuery: String? = null): Resource<NewsResponse> {
-
-        try {
-            val query = searchQuery ?: "us"
-            return Resource.Success(api.getEverything(query))
+    suspend fun getEverything(searchQuery: String): Resource<NewsResponse> {
+        return try {
+            Resource.Success(api.getEverything(searchQuery))
         } catch (e: Exception) {
-            return Resource.Error(e.message.toString())
+            Resource.Error(e.message.toString())
         }
     }
-
 
 }
