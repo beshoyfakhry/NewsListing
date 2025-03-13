@@ -6,6 +6,7 @@ import com.beshoy.abroad.data.repo.Resource
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -50,7 +51,7 @@ class NewsRepositoryTest {
 
         val exceptionMessage = "Network error"
 
-        coEvery { mockApi.getEverything(any(), any()) } throws Exception(exceptionMessage)
+        coEvery { mockApi.getEverything(any()) } throws Exception(exceptionMessage)
 
 
         val result = repository.getEverything("bitcoin")
@@ -59,5 +60,21 @@ class NewsRepositoryTest {
                 assertEquals(exceptionMessage, it.message)
             }
         }
+    }
+    @Test
+    fun `getEverything should return Success with empty list when API response is empty`() = runTest {
+
+        val mockResponse = NewsResponse("ok", 0, emptyList())
+
+        coEvery { mockApi.getEverything(any()) } returns mockResponse
+
+        val result = repository.getEverything("")
+        result.let {
+            if (it is Resource.Success) {
+                assertTrue(it.data.articles.isEmpty())
+            }
+            assertTrue(result is Resource.Success)
+        }
+
     }
 }

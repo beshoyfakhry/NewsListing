@@ -16,9 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading
-
     private val _newsList = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading)
     val newsList: StateFlow<Resource<NewsResponse>> = _newsList
 
