@@ -16,8 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : ViewModel() {
 
+
     private val _newsState = MutableStateFlow<Resource<NewsResponse>>(Resource.Loading)
     val newsState: StateFlow<Resource<NewsResponse>> = _newsState
+
 
     fun onSearchTextChanged(text: String) {
         if (text.length >= 3) {
