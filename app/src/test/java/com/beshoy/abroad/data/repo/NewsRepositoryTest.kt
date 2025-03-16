@@ -2,7 +2,7 @@ import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
 import com.beshoy.abroad.data.repo.NewsApi
 import com.beshoy.abroad.data.repo.NewsRepository
-import com.beshoy.abroad.data.repo.Resource
+import com.beshoy.abroad.data.repo.ResourceState
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -36,7 +36,7 @@ class NewsRepositoryTest {
         val result = repository.getEverything("bitcoin")
 
         result.let {
-            if (it is Resource.Success) {
+            if (it is ResourceState.Success) {
 
                 assertEquals(1, it.data.articles.size)
                 assertEquals("Breaking News", it.data.articles[0].author)
@@ -56,7 +56,7 @@ class NewsRepositoryTest {
 
         val result = repository.getEverything("bitcoin")
         result.let {
-            if (it is Resource.Error) {
+            if (it is ResourceState.Error) {
                 assertEquals(exceptionMessage, it.message)
             }
         }
@@ -70,10 +70,10 @@ class NewsRepositoryTest {
 
         val result = repository.getEverything("")
         result.let {
-            if (it is Resource.Success) {
+            if (it is ResourceState.Success) {
                 assertTrue(it.data.articles.isEmpty())
             }
-            assertTrue(result is Resource.Success)
+            assertTrue(result is ResourceState.Success)
         }
 
     }

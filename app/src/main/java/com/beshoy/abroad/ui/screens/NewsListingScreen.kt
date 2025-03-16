@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
-import com.beshoy.abroad.data.repo.Resource
+import com.beshoy.abroad.data.repo.ResourceState
 import com.beshoy.abroad.ui.components.NewsItem
 import com.beshoy.abroad.viewModel.NewsViewModel
 
@@ -62,19 +62,22 @@ fun NewsListingScreen(
 @Composable
 fun ShowNewsList(
     isSearch: Boolean,
-    newsState: Resource<NewsResponse>,
+    newsState: ResourceState,
     navController: NavController,
     onSearchTextChanged: (String) -> Unit
 ) {
     val searchText = remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(8.dp)) {
+
             if (isSearch) {
                 OutlinedTextField(
                     value = searchText.value,
                     onValueChange = {
                         searchText.value = it
-                        onSearchTextChanged(searchText.value)
+                        onSearchTextChanged(
+                            searchText.value
+                        )
                     },
                     label = { Text("Search News") },
                     modifier = Modifier.fillMaxWidth(),
@@ -82,13 +85,18 @@ fun ShowNewsList(
                 )
             }
             when (newsState) {
-                is Resource.Loading -> CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Black.copy(alpha = 0.3f)
-                )
+                is ResourceState.Loading -> {
+                    if ((isSearch && searchText.value.length >= 3) || !isSearch) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Color.Black.copy(alpha = 0.3f)
+                        )
+                    }
+                }
 
-                is Resource.Success -> {
-                    val articles = newsState.data.articles
+                is ResourceState.Success<*> -> {
+                    val articles = (newsState.data as NewsResponse).articles
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -109,7 +117,7 @@ fun ShowNewsList(
                     }
                 }
 
-                is Resource.Error -> {
+                is ResourceState.Error -> {
                     CustomAlertDialog()
 //                    Text("Error: ${newsList.message}")
                 }
