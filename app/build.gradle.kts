@@ -119,7 +119,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.coil)
-
+    implementation(libs.androidx.splashscreen)
    
 
     // Testing dependencies

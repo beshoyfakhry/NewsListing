@@ -36,13 +36,12 @@ class NewsRepositoryTest {
         val result = repository.getEverything("bitcoin")
 
         result.let {
-            if (it is ResourceState.Success) {
-
-                assertEquals(1, it.data.articles.size)
-                assertEquals("Breaking News", it.data.articles[0].author)
+            if (it is ResourceState.Success<*>) {
+                val newsResponse = it.data as NewsResponse
+                assertEquals(1, newsResponse.articles.size)
+                assertEquals("Breaking News", newsResponse.articles[0].author)
             }
         }
-
     }
 
 
@@ -61,20 +60,23 @@ class NewsRepositoryTest {
             }
         }
     }
+
     @Test
-    fun `getEverything should return Success with empty list when API response is empty`() = runTest {
+    fun `getEverything should return Success with empty list when API response is empty`() =
+        runTest {
 
-        val mockResponse = NewsResponse("ok", 0, emptyList())
+            val mockResponse = NewsResponse("ok", 0, emptyList())
 
-        coEvery { mockApi.getEverything(any()) } returns mockResponse
+            coEvery { mockApi.getEverything(any()) } returns mockResponse
 
-        val result = repository.getEverything("")
-        result.let {
-            if (it is ResourceState.Success) {
-                assertTrue(it.data.articles.isEmpty())
+            val result = repository.getEverything("")
+            result.let {
+                if (it is ResourceState.Success<*>) {
+                    val newsResponse = it.data as NewsResponse
+                    assertTrue(newsResponse.articles.isEmpty())
+                }
+                assertTrue(result is ResourceState.Success<*>)
             }
-            assertTrue(result is ResourceState.Success)
-        }
 
-    }
+        }
 }

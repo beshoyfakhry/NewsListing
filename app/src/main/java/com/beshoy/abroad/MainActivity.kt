@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,6 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+     //   installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -95,7 +97,7 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "SplashScreen") {
+    NavHost(navController = navController, startDestination = "NewsListing") {
 
         composable("NewsListing") { NewsListingScreen(navController, isSearch = false) }
         composable("newsDetail") {
@@ -104,7 +106,7 @@ fun MainNavigation(navController: NavHostController) {
             news?.let { NewsDetailsScreen(it) }
 
         }
-        composable("SplashScreen") { SplashScreen(navController) }
+//        composable("SplashScreen") { SplashScreen(navController) }
         composable("SearchNewsListing") { NewsListingScreen(navController, true) }
     }
 }
