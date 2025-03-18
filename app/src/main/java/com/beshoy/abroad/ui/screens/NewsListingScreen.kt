@@ -67,7 +67,8 @@ fun ShowNewsList(
     onSearchTextChanged: (String) -> Unit
 ) {
     val searchText = remember { mutableStateOf("") }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center ) {
         Column(modifier = Modifier.padding(8.dp)) {
 
             if (isSearch) {
