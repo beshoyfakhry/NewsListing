@@ -75,9 +75,9 @@ fun AppScaffold(isConnected: Boolean) {
 fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected: Boolean) {
     TopAppBar(
         title = {
-            Text(
-                text = if (isConnected) "Connected ✅" else "No Internet ❌"
-            )
+//            Text(
+//                text = if (isConnected) "Connected ✅" else "No Internet ❌"
+//            )
         }, actions = {
             IconButton(onClick = {
                 navController.navigate("SearchNewsListing")
