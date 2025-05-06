@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Abroad" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Abroad" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+
+    <style name="SplashTheme" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#ff6666</item>  <!-- Background color -->
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/common_google_signin_btn_icon_disabled
+        </item>  <!-- Animated logo -->
+        <item name="windowSplashScreenAnimationDuration">1000</item>  <!-- Animation duration -->
+        <item name="postSplashScreenTheme">@style/Theme.Abroad
+        </item>  <!-- Main theme after splash -->
+    </style>
+
+
 </resources>

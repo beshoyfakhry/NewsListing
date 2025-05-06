@@ -14,14 +14,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,65 +30,73 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
-import com.beshoy.abroad.data.repo.Resource
+import com.beshoy.abroad.data.repo.ResourceState
 import com.beshoy.abroad.ui.components.NewsItem
 import com.beshoy.abroad.viewModel.NewsViewModel
 
 @Composable
-fun NewsListingScreen(navController: NavController, isSearch: Boolean = false) {
-
-    val newsViewModel: NewsViewModel = hiltViewModel()
-
-    val newsList = newsViewModel.newsList.collectAsState()
-    if (!isSearch) {
-        newsViewModel.getNews()
+fun NewsListingScreen(
+    navController: NavController,
+    isSearch: Boolean = false,
+    newsViewModel: NewsViewModel = hiltViewModel()
+) {
+    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle()
+    LaunchedEffect(isSearch) {
+        newsViewModel.getNews(if (!isSearch) "us" else "")
     }
     ShowNewsList(
-        newsViewModel,
         isSearch = isSearch,
-        newsList = newsList.value,
-        navController = navController
+        newsState = newsState.value,
+        navController = navController,
+        onSearchTextChanged = {
+            newsViewModel.onSearchTextChanged(it)
+        }
     )
 }
 
 @Composable
 fun ShowNewsList(
-    newsViewModel: NewsViewModel,
-
     isSearch: Boolean,
-    newsList: Resource<NewsResponse>,
-    navController: NavController
+    newsState: ResourceState,
+    navController: NavController,
+    onSearchTextChanged: (String) -> Unit
 ) {
-
-
+    val searchText = remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
-
-//        else {
         Column(modifier = Modifier.padding(8.dp)) {
-            if (isSearch) {
 
+            if (isSearch) {
                 OutlinedTextField(
-                    value = newsViewModel.searchText.value,
-                    onValueChange = { newsViewModel.onSearchTextChanged(it) },
+                    value = searchText.value,
+                    onValueChange = {
+                        searchText.value = it
+                        onSearchTextChanged(
+                            searchText.value
+                        )
+                    },
                     label = { Text("Search News") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
-
-
             }
-            when (newsList) {
-                is Resource.Loading -> CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    color = Color.Black.copy(alpha = 0.3f)
-                )
+            when (newsState) {
+                is ResourceState.Loading -> {
+                    if ((isSearch && searchText.value.length >= 3) || !isSearch) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            color = Color.Black.copy(alpha = 0.3f)
+                        )
+                    }
+                }
+//Comment
+                is ResourceState.Success<*> -> {
+                    val articles = (newsState.data as NewsResponse).articles
 
-                is Resource.Success -> {
-                    val articles = newsList.data.articles
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -110,7 +117,7 @@ fun ShowNewsList(
                     }
                 }
 
-                is Resource.Error -> {
+                is ResourceState.Error -> {
                     CustomAlertDialog()
 //                    Text("Error: ${newsList.message}")
                 }
@@ -122,9 +129,11 @@ fun ShowNewsList(
 
 @Composable
 fun CustomAlertDialog() {
+    val shouldShowDialog = remember { mutableStateOf(true) }
 
+    if (shouldShowDialog.value) {
         AlertDialog(
-            onDismissRequest = {  },
+            onDismissRequest = { },
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Warning, contentDescription = "Warning", tint = Color.Red)
@@ -134,19 +143,17 @@ fun CustomAlertDialog() {
             },
             text = { Text(text = "Please check internet connection and try again") },
             confirmButton = {
-//                Button(onClick = {  }) {
-//                    Text("Yes")
-//                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = {  }) {
+                OutlinedButton(onClick = {
+                    shouldShowDialog.value = false
+                }) {
                     Text("OK")
                 }
-            }
+            },
         )
 
+    }
 }
-//Comment
+
 
 @Preview(showBackground = true)
 @Composable
@@ -168,7 +175,6 @@ fun PreviewNewsListingScreen() {
 
     NewsListingScreenPreview(mockNewsList)
 }
-
 
 
 @Composable

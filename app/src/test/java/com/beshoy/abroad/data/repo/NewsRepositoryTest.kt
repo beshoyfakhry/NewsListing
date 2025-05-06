@@ -2,10 +2,11 @@ import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
 import com.beshoy.abroad.data.repo.NewsApi
 import com.beshoy.abroad.data.repo.NewsRepository
-import com.beshoy.abroad.data.repo.Resource
+import com.beshoy.abroad.data.repo.ResourceState
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -35,13 +36,12 @@ class NewsRepositoryTest {
         val result = repository.getEverything("bitcoin")
 
         result.let {
-            if (it is Resource.Success) {
-
-                assertEquals(1, it.data.articles.size)
-                assertEquals("Breaking News", it.data.articles[0].author)
+            if (it is ResourceState.Success<*>) {
+                val newsResponse = it.data as NewsResponse
+                assertEquals(1, newsResponse.articles.size)
+                assertEquals("Breaking News", newsResponse.articles[0].author)
             }
         }
-
     }
 
 
@@ -50,14 +50,33 @@ class NewsRepositoryTest {
 
         val exceptionMessage = "Network error"
 
-        coEvery { mockApi.getEverything(any(), any()) } throws Exception(exceptionMessage)
+        coEvery { mockApi.getEverything(any()) } throws Exception(exceptionMessage)
 
 
         val result = repository.getEverything("bitcoin")
         result.let {
-            if (it is Resource.Error) {
+            if (it is ResourceState.Error) {
                 assertEquals(exceptionMessage, it.message)
             }
         }
     }
+
+    @Test
+    fun `getEverything should return Success with empty list when API response is empty`() =
+        runTest {
+
+            val mockResponse = NewsResponse("ok", 0, emptyList())
+
+            coEvery { mockApi.getEverything(any()) } returns mockResponse
+
+            val result = repository.getEverything("")
+            result.let {
+                if (it is ResourceState.Success<*>) {
+                    val newsResponse = it.data as NewsResponse
+                    assertTrue(newsResponse.articles.isEmpty())
+                }
+                assertTrue(result is ResourceState.Success<*>)
+            }
+
+        }
 }

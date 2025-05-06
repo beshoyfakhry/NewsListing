@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,22 +39,17 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+     //   installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
             AbroadTheme {
-
                 val networkViewModel: NetworkViewModel = hiltViewModel()
                 val isConnected by networkViewModel.isConnected.collectAsState(initial = false)
-
                 networkViewModel.registerNetworkCallback()
-
                 AppScaffold(isConnected)
-
-
             }
-
         }
     }
 }
@@ -72,7 +68,6 @@ fun AppScaffold(isConnected: Boolean) {
                 .padding(paddingValues)
 
         ) {
-
             MainNavigation(navController)
         }
     }
@@ -85,7 +80,6 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
         title = {
             Text(
                 text = if (isConnected) "Connected ✅" else "No Internet ❌"
-
             )
         }, actions = {
             IconButton(onClick = {
@@ -103,10 +97,7 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
-
-    val newsViewMode: NewsViewModel = hiltViewModel()
-
-    NavHost(navController = navController, startDestination = "SplashScreen") {
+    NavHost(navController = navController, startDestination = "NewsListing") {
 
         composable("NewsListing") { NewsListingScreen(navController, isSearch = false) }
         composable("newsDetail") {
@@ -115,7 +106,7 @@ fun MainNavigation(navController: NavHostController) {
             news?.let { NewsDetailsScreen(it) }
 
         }
-        composable("SplashScreen") { SplashScreen(navController) }
+//        composable("SplashScreen") { SplashScreen(navController) }
         composable("SearchNewsListing") { NewsListingScreen(navController, true) }
     }
 }

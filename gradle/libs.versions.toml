@@ -23,8 +23,7 @@ pagingCommonAndroid = "3.3.6"
 firebaseStorageKtx = "21.0.1"
 
 kotlinx-coroutines-test-version ="1.7.3"
-
-
+splashscreen-version = "1.0.1"
 
 
 
@@ -60,6 +59,8 @@ hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen-version" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

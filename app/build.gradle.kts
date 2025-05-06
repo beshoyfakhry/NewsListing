@@ -5,7 +5,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
-//        id("kotlin-parcelize")
+
+
 }
 
 android {
@@ -118,6 +119,8 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.coil)
+    implementation(libs.androidx.splashscreen)
+   
 
     // Testing dependencies
     testImplementation(libs.junit)
