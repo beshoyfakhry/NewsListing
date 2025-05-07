@@ -16,7 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -57,7 +56,11 @@ class MainActivity : ComponentActivity() {
 fun AppScaffold(isConnected: Boolean) {
     val navController = rememberNavController()
     Scaffold(
-        topBar = { TopAppBarWithConnectionStatus(navController, isConnected = isConnected) }
+        topBar = {
+            TopAppBarWithConnectionStatus(headerAction = {
+                navController.navigate("SearchNewsListing")
+            }, isConnected = isConnected)
+        }
 
     ) { paddingValues ->
         Column(
@@ -73,15 +76,15 @@ fun AppScaffold(isConnected: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected: Boolean) {
+fun TopAppBarWithConnectionStatus(headerAction: (int: Int) -> Unit, isConnected: Boolean) {
     TopAppBar(
         title = {
-//            Text(
-//                text = if (isConnected) "Connected ✅" else "No Internet ❌"
-//            )
+            Text(
+                text = if (isConnected) "Connected ✅" else "No Internet ❌"
+            )
         }, actions = {
             IconButton(onClick = {
-                navController.navigate("SearchNewsListing")
+                headerAction(1)
             }) {
                 Icon(
                     imageVector = Icons.Default.Search, // Replace with the icon you want
