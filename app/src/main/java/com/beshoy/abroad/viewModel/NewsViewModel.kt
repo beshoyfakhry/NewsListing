@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.beshoy.abroad.data.repo.NewsRepository
 import com.beshoy.abroad.data.repo.ResourceState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +30,12 @@ class NewsViewModel @Inject constructor(private val newsRepo: NewsRepository) : 
         if (query.isNotEmpty()) {
             viewModelScope.launch {
                 _newsState.value = ResourceState.Loading
-                _newsState.value = newsRepo.getEverything(query)
+
+                val result = withContext(Dispatchers.IO) {
+                    newsRepo.getEverything(query)
+                }
+                _newsState.value = result
+
 
             }
         }
