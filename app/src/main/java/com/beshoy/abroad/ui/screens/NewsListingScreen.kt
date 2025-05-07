@@ -67,7 +67,8 @@ fun ShowNewsList(
     onSearchTextChanged: (String) -> Unit
 ) {
     val searchText = remember { mutableStateOf("") }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center ) {
         Column(modifier = Modifier.padding(8.dp)) {
 
             if (isSearch) {
@@ -180,11 +181,8 @@ fun PreviewNewsListingScreen() {
 @Composable
 fun NewsListingScreenPreview(mockNews: List<NewsObject>) {
     val navController = rememberNavController()
-    //  val newsViewModel = NewsViewModel(null)
     val newsList = remember {
         mutableStateOf(mockNews)
     }
-
-//    ShowNewsList(null,isLoading = false, true, newsList = newsList.value, navController)
 }
 

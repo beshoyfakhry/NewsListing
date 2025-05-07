@@ -18,11 +18,9 @@ class AppModule {
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient {
-        // Create a logging interceptor to log the HTTP request/response
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY // Set the level of logging
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        // Create and return OkHttpClient with logging interceptor
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .build()
@@ -44,11 +42,6 @@ class AppModule {
         return retrofit.create(NewsApi::class.java)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideNetworkConnectionService(networkConnectionService: NetworkConnectionService): NetworkConnectionService {
-//        return networkConnectionService
-//    }
 
 
 }

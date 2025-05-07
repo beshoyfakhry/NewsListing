@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,11 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,24 +27,23 @@ import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.ui.screens.NewsDetailsScreen
 import com.beshoy.abroad.ui.screens.NewsListingScreen
-import com.beshoy.abroad.ui.screens.SplashScreen
+import com.beshoy.abroad.ui.screens.Screen
 import com.beshoy.abroad.ui.theme.AbroadTheme
 import com.beshoy.abroad.viewModel.NetworkViewModel
-import com.beshoy.abroad.viewModel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-     //   installSplashScreen()
+        //   installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
             AbroadTheme {
                 val networkViewModel: NetworkViewModel = hiltViewModel()
-                val isConnected by networkViewModel.isConnected.collectAsState(initial = false)
+                val isConnected by networkViewModel.isConnected.collectAsStateWithLifecycle(false)
                 networkViewModel.registerNetworkCallback()
                 AppScaffold(isConnected)
             }
@@ -59,7 +56,11 @@ class MainActivity : ComponentActivity() {
 fun AppScaffold(isConnected: Boolean) {
     val navController = rememberNavController()
     Scaffold(
-        topBar = { TopAppBarWithConnectionStatus(navController, isConnected = isConnected) }
+        topBar = {
+            TopAppBarWithConnectionStatus(headerAction = {
+                navController.navigate("SearchNewsListing")
+            }, isConnected = isConnected)
+        }
 
     ) { paddingValues ->
         Column(
@@ -75,7 +76,7 @@ fun AppScaffold(isConnected: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected: Boolean) {
+fun TopAppBarWithConnectionStatus(headerAction: (int: Int) -> Unit, isConnected: Boolean) {
     TopAppBar(
         title = {
             Text(
@@ -83,7 +84,7 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
             )
         }, actions = {
             IconButton(onClick = {
-                navController.navigate("SearchNewsListing")
+                headerAction(1)
             }) {
                 Icon(
                     imageVector = Icons.Default.Search, // Replace with the icon you want
@@ -97,16 +98,16 @@ fun TopAppBarWithConnectionStatus(navController: NavHostController, isConnected:
 
 @Composable
 fun MainNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "NewsListing") {
+    NavHost(navController = navController, startDestination = Screen.NewsListing.route) {
 
-        composable("NewsListing") { NewsListingScreen(navController, isSearch = false) }
-        composable("newsDetail") {
+        composable(Screen.NewsListing.route) { NewsListingScreen(navController, isSearch = false) }
+        composable(Screen.NewsDetails.route) {
             val news =
                 navController.previousBackStackEntry?.savedStateHandle?.get<NewsObject>("news")
             news?.let { NewsDetailsScreen(it) }
 
         }
 //        composable("SplashScreen") { SplashScreen(navController) }
-        composable("SearchNewsListing") { NewsListingScreen(navController, true) }
+        composable(Screen.SearchNews.route) { NewsListingScreen(navController, true) }
     }
 }
