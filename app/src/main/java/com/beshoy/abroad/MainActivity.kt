@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AbroadTheme {
                 val networkViewModel: NetworkViewModel = hiltViewModel()
-                val isConnected by networkViewModel.isConnected.collectAsState(initial = false)
+                val isConnected by networkViewModel.isConnected.collectAsStateWithLifecycle(false)
                 networkViewModel.registerNetworkCallback()
                 AppScaffold(isConnected)
             }

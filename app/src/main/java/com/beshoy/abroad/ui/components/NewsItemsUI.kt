@@ -36,17 +36,6 @@ fun NewsItem(item: NewsObject, onItemClicked: (NewsObject) -> Unit = {}) {
                 },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            AsyncImage(
-//                model = ImageRequest.Builder(LocalContext.current)
-//                    .data(item.urlToImage)
-//                    .crossfade(true)
-//                    .build(),
-//                contentDescription = "News Image",
-//                modifier = Modifier
-//                    .fillMaxWidth() // Make the image fit the width of the item
-//                    .height(100.dp), // Adjust height for the image
-//                contentScale = ContentScale.Crop // Crop to fit the container (it will not stretch)
-//            )
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)

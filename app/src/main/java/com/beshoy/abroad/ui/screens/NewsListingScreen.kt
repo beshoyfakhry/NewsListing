@@ -181,11 +181,8 @@ fun PreviewNewsListingScreen() {
 @Composable
 fun NewsListingScreenPreview(mockNews: List<NewsObject>) {
     val navController = rememberNavController()
-    //  val newsViewModel = NewsViewModel(null)
     val newsList = remember {
         mutableStateOf(mockNews)
     }
-
-//    ShowNewsList(null,isLoading = false, true, newsList = newsList.value, navController)
 }
 
