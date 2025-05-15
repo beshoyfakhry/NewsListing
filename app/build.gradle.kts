@@ -5,25 +5,21 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
-
-
+    alias(libs.plugins.kotlin.compose.compiler)
 }
 
 android {
     namespace = "com.beshoy.abroad"
-    compileSdk = 34
+    compileSdk = libs.versions.targetSdkVersion.get().toInt()
 
     defaultConfig {
         applicationId = "com.beshoy.abroad"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = libs.versions.minSdkVersion.get().toInt()
+        targetSdk = libs.versions.targetSdkVersion.get().toInt()
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+
 //        val apiKey = project.findProperty("API_KEY") as String? ?: ""
 //        buildConfigField("String", "API_KEY", "\"$apiKey\"")
 
@@ -50,9 +46,11 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        val javaVersion = libs.versions.javaVersion.get()
+        sourceCompatibility = JavaVersion.toVersion(javaVersion)
+        targetCompatibility = JavaVersion.toVersion(javaVersion)
     }
 
     packaging {
@@ -70,21 +68,17 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = libs.versions.javaVersion.get()
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
 
 //    kotlinOptions {
 //        freeCompilerArgs += "-Xplugin=kotlin-parcelize"
 //    }
-
-
 }
 
 dependencies {

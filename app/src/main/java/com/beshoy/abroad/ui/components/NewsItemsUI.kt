@@ -41,8 +41,8 @@ fun NewsItem(item: NewsObject, onItemClicked: (NewsObject) -> Unit = {}) {
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(item.urlToImage) // URL of the image
                     .crossfade(true)
-                    .placeholder(coil.base.R.drawable.ic_100tb) // Show placeholder while loading
-                    .error(androidx.loader.R.drawable.notification_bg_low) // Show error image if loading fails
+//                    .placeholder(coil.base.R.drawable.ic_100tb) // Show placeholder while loading
+//                    .error(androidx.loader.R.drawable.notification_bg_low) // Show error image if loading fails
                     .scale(Scale.FIT) // Control the scaling of the image
                     .build(),
                 contentDescription = "Image from URL",
