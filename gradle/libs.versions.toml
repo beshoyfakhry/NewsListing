@@ -28,7 +28,7 @@ firebaseStorageKtx = "21.0.1"
 kotlinx-coroutines-test-version ="1.10.1"
 splashscreen-version = "1.0.1"
 
-
+accompanist = "0.33.2-alpha"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +64,8 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
 
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen-version" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

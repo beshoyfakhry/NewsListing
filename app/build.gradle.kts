@@ -114,7 +114,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.coil)
     implementation(libs.androidx.splashscreen)
-   
+    implementation(libs.accompanist.navigation.animation)
 
     // Testing dependencies
     testImplementation(libs.junit)
