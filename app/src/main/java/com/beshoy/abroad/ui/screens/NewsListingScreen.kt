@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,14 +46,9 @@ fun NewsListingScreen(
     newsViewModel: NewsViewModel = hiltViewModel()
 ) {
     val newsState = newsViewModel.newsState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        if (newsViewModel.newsState.value !is ResourceState.Success<*>) {
-            newsViewModel.getNews(if (!isSearch) "us" else "")
-        }
+    LaunchedEffect(isSearch) {
+        newsViewModel.getNews(if (!isSearch) "us" else "")
     }
-
-
     ShowNewsList(
         isSearch = isSearch,
         newsState = newsState.value,
@@ -74,8 +67,10 @@ fun ShowNewsList(
     onSearchTextChanged: (String) -> Unit
 ) {
     val searchText = remember { mutableStateOf("") }
-    Box(modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center ) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         Column(modifier = Modifier.padding(8.dp)) {
 
             if (isSearch) {
@@ -104,10 +99,8 @@ fun ShowNewsList(
 //Comment
                 is ResourceState.Success<*> -> {
                     val articles = (newsState.data as NewsResponse).articles
-                    val listState = rememberSaveable(saver = LazyListState.Saver) {
-                        LazyListState()
-                    }
-                    LazyColumn(state = listState,
+
+                    LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(8.dp),
@@ -131,6 +124,8 @@ fun ShowNewsList(
                     CustomAlertDialog()
 //                    Text("Error: ${newsList.message}")
                 }
+
+
             }
 
         }
@@ -194,4 +189,3 @@ fun NewsListingScreenPreview(mockNews: List<NewsObject>) {
         mutableStateOf(mockNews)
     }
 }
-

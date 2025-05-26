@@ -7,7 +7,7 @@ sealed class Screen(val route: String) {
       return when(route) {
         NewsListing.route -> NewsListing
         NewsDetails.route -> NewsDetails
-        SearchNews.route -> SearchNews
+        NewsSearchScreen.route -> NewsSearchScreen
         else -> NewsListing
       }
     }
@@ -15,6 +15,6 @@ sealed class Screen(val route: String) {
 
   object NewsListing : Screen("NewsListing")
   object NewsDetails : Screen("newsDetail")
-  object SearchNews : Screen("SearchNewsListing")
+  object NewsSearchScreen : Screen("SearchNewsListing")
 
 }

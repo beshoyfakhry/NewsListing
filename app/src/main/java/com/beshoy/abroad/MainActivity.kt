@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.ui.screens.NewsDetailsScreen
 import com.beshoy.abroad.ui.screens.NewsListingScreen
+import com.beshoy.abroad.ui.screens.NewsSearchScreen
 import com.beshoy.abroad.ui.screens.Screen
 import com.beshoy.abroad.ui.theme.AbroadTheme
 import com.beshoy.abroad.viewModel.NetworkViewModel
@@ -61,7 +62,7 @@ fun AppScaffold(isConnected: Boolean) {
     Scaffold(
         topBar = {
             TopAppBarWithConnectionStatus(headerAction = {
-                navController.navigate("SearchNewsListing")
+                navController.navigate(Screen.NewsSearchScreen.route)
             }, isConnected = isConnected)
         }
 
@@ -124,6 +125,6 @@ fun MainNavigation(navController: NavHostController) {
 
         }
 
-        composable(Screen.SearchNews.route) { NewsListingScreen(navController, true) }
+        composable(Screen.NewsSearchScreen.route) { NewsSearchScreen(navController) }
     }
 }
