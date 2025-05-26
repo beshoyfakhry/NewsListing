@@ -104,7 +104,7 @@ fun TopAppBarWithConnectionStatus(headerAction: (int: Int) -> Unit, isConnected:
 fun MainNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.NewsListing.route) {
 
-        composable(Screen.NewsListing.route) { NewsListingScreen(navController, isSearch = false) }
+        composable(Screen.NewsListing.route) { NewsListingScreen(navController) }
         composable(
             Screen.NewsDetails.route,
             enterTransition = {
