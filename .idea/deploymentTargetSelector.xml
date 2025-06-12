@@ -4,10 +4,21 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-12T12:06:56.976338Z">
+        <DropdownSelection timestamp="2025-05-19T18:28:29.540967400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/mina.zaki/.android/avd/Pixel_8_Pro_API_VanillaIceCream.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=D:\AndroidSDK\AVD\Pixel_4a.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="Beshoy.Abroad.app">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-05-20T17:56:35.993833100Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=D:\AndroidSDK\AVD\Pixel_7.avd" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -26,8 +26,8 @@ fun NewsDetailsScreen(newsItem: NewsObject) {
             model = ImageRequest.Builder(LocalContext.current)
                 .data(newsItem.urlToImage)
                 .crossfade(true)
-                .placeholder(coil.base.R.drawable.ic_100tb)
-                .error(androidx.loader.R.drawable.notification_bg_low)
+//                .placeholder(coil.base.R.drawable.ic_100tb)
+//                .error(androidx.loader.R.drawable.notification_bg_low)
                 .scale(Scale.FILL)
                 .build(),
             contentDescription = "Image from URL",

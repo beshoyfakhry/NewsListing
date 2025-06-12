@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.ui.screens.NewsDetailsScreen
 import com.beshoy.abroad.ui.screens.NewsListingScreen
+import com.beshoy.abroad.ui.screens.NewsSearchScreen
 import com.beshoy.abroad.ui.screens.Screen
 import com.beshoy.abroad.ui.theme.AbroadTheme
 import com.beshoy.abroad.viewModel.NetworkViewModel
@@ -58,7 +62,7 @@ fun AppScaffold(isConnected: Boolean) {
     Scaffold(
         topBar = {
             TopAppBarWithConnectionStatus(headerAction = {
-                navController.navigate("SearchNewsListing")
+                navController.navigate(Screen.NewsSearchScreen.route)
             }, isConnected = isConnected)
         }
 
@@ -100,14 +104,27 @@ fun TopAppBarWithConnectionStatus(headerAction: (int: Int) -> Unit, isConnected:
 fun MainNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.NewsListing.route) {
 
-        composable(Screen.NewsListing.route) { NewsListingScreen(navController, isSearch = false) }
-        composable(Screen.NewsDetails.route) {
+        composable(Screen.NewsListing.route) { NewsListingScreen(navController) }
+        composable(
+            Screen.NewsDetails.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 1000 },
+                    animationSpec = tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -1000 },
+                    animationSpec = tween(500)
+                )
+            }) {
             val news =
                 navController.previousBackStackEntry?.savedStateHandle?.get<NewsObject>("news")
             news?.let { NewsDetailsScreen(it) }
 
         }
-//        composable("SplashScreen") { SplashScreen(navController) }
-        composable(Screen.SearchNews.route) { NewsListingScreen(navController, true) }
+
+        composable(Screen.NewsSearchScreen.route) { NewsSearchScreen(navController) }
     }
 }

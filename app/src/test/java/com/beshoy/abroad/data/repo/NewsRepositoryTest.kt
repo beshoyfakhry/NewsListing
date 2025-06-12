@@ -36,7 +36,7 @@ class NewsRepositoryTest {
         val result = repository.getEverything("bitcoin")
 
         result.let {
-            if (it is ResourceState.Success<*>) {
+            if (it is ResourceState<Any?>.Success<*>) {
                 val newsResponse = it.data as NewsResponse
                 assertEquals(1, newsResponse.articles.size)
                 assertEquals("Breaking News", newsResponse.articles[0].author)
@@ -55,7 +55,7 @@ class NewsRepositoryTest {
 
         val result = repository.getEverything("bitcoin")
         result.let {
-            if (it is ResourceState.Error) {
+            if (it is ResourceState<Any?>.Error) {
                 assertEquals(exceptionMessage, it.message)
             }
         }
@@ -71,11 +71,11 @@ class NewsRepositoryTest {
 
             val result = repository.getEverything("")
             result.let {
-                if (it is ResourceState.Success<*>) {
+                if (it is ResourceState<Any?>.Success<*>) {
                     val newsResponse = it.data as NewsResponse
                     assertTrue(newsResponse.articles.isEmpty())
                 }
-                assertTrue(result is ResourceState.Success<*>)
+                assertTrue(result is ResourceState<Any?>.Success<*>)
             }
 
         }
