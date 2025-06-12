@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Abroad</string>
+    <string name="search">Search</string>
+    <string name="error">Error</string>
+    <string name="warning">Warning</string>
+    <string name="ok">OK</string>
+    <string name="image_from_url">Image from URL</string>
+    <string name="please_check_internet_connection_and_try_again">Please check internet connection and try again</string>
 </resources>

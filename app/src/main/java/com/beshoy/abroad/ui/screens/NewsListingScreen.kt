@@ -18,12 +18,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.beshoy.abroad.R
 import com.beshoy.abroad.data.domain.NewsObject
 import com.beshoy.abroad.data.domain.NewsResponse
 import com.beshoy.abroad.data.repo.ResourceState
@@ -98,7 +100,7 @@ fun ShowNewsList(
                 }
 
                 is ResourceState.Error -> {
-                    CustomSearchAlertDialog("Please check internet connection and try again")
+                    CustomSearchAlertDialog(stringResource(R.string.please_check_internet_connection_and_try_again))
 
                 }
             }

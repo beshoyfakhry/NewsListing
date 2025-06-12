@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.beshoy.abroad.R
 
 
 @Composable
@@ -29,9 +31,9 @@ fun CustomSearchAlertDialog(alertText: String) {
             onDismissRequest = { },
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Warning, contentDescription = "Warning", tint = Color.Red)
+                    Icon(Icons.Default.Warning, contentDescription = stringResource(R.string.warning), tint = Color.Red)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Error", fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.error), fontWeight = FontWeight.Bold)
                 }
             },
             text = { Text(text = alertText) },
@@ -40,7 +42,7 @@ fun CustomSearchAlertDialog(alertText: String) {
 
                     shouldShowDialog.value = false
                 }) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
         )
