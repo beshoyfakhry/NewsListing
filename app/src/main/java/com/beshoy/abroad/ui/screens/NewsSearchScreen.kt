@@ -13,13 +13,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,134 +32,106 @@ import com.beshoy.abroad.data.repo.ResourceState
 import com.beshoy.abroad.ui.components.CustomSearchAlertDialog
 import com.beshoy.abroad.ui.components.NewsItem
 import com.beshoy.abroad.viewModel.NewsViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 
 @Composable
 fun NewsSearchScreen(
-    navController: NavController,
-    newsViewModel: NewsViewModel = hiltViewModel()
+  navController: NavController,
+  newsViewModel: NewsViewModel = hiltViewModel()
 ) {
 
-    val newsState = newsViewModel.newsState.collectAsStateWithLifecycle()
-    var query by rememberSaveable { mutableStateOf("") }
+  val newsState = newsViewModel.newsState.collectAsStateWithLifecycle()
+  val query by newsViewModel.queryState.collectAsStateWithLifecycle()
 
-    Column() {
+  Column {
+    SearchBar(
+      currentQuery = query,
+      onTextChanged = newsViewModel::onSearchTextChanged
+    )
 
-        DebouncedSearchBar(
-            onTextChanged = {
-                query = it
-                newsViewModel.getNews(it)
-            })
-
-        ShowSearchList(
-            query,
-            newsState = newsState.value,
-            moveDetailsAction = {
-                navController.currentBackStackEntry?.savedStateHandle?.set(
-                    "news",
-                    it
-                )
-                navController.navigate(Screen.NewsDetails.route)
-            }
+    ShowSearchList(
+      query,
+      newsState = newsState.value,
+      moveDetailsAction = {
+        navController.currentBackStackEntry?.savedStateHandle?.set(
+          "news",
+          it
         )
-    }
+        navController.navigate(Screen.NewsDetails.route)
+      }
+    )
+  }
 }
 
 @Composable
-fun DebouncedSearchBar(
-    onTextChanged: (String) -> Unit
+fun SearchBar(
+  currentQuery: String,
+  onTextChanged: (String) -> Unit
 ) {
-    var internalQuery by rememberSaveable { mutableStateOf("") }
-    var firstTime by rememberSaveable { mutableStateOf(true) }
-
-
-    LaunchedEffect(Unit) {
-        if (firstTime) {
-            firstTime = false
-            snapshotFlow { internalQuery }
-                .debounce(500)
-                .filter { it.isNotBlank() }
-                .distinctUntilChanged()
-                .collectLatest {
-                    onTextChanged(it)
-                }
-        }
-    }
-
-    OutlinedTextField(
-        value = internalQuery,
-        onValueChange = {
-            internalQuery = it
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        label = { Text(stringResource(R.string.search)) },
-        singleLine = true
-    )
+  OutlinedTextField(
+    value = currentQuery,
+    onValueChange = onTextChanged,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(16.dp),
+    label = { Text(stringResource(R.string.search)) },
+    singleLine = true
+  )
 }
 
 @Composable
 fun ShowSearchList(
-    query: String,
-    newsState: ResourceState,
-    moveDetailsAction: (NewsObject) -> Unit
+  query: String,
+  newsState: ResourceState,
+  moveDetailsAction: (NewsObject) -> Unit
 ) {
-    if (query.isNotEmpty()) {
-        val searchText = remember { mutableStateOf("") }
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Column(modifier = Modifier.padding(8.dp)) {
-                when (newsState) {
-                    is ResourceState.Loading -> {
-                        if (searchText.value.isNotEmpty()) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                color = Color.Black.copy(alpha = 0.3f)
-                            )
-                        }
-                    }
-
-                    is ResourceState.Success<*> -> {
-                        val articles = (newsState.data as NewsResponse).articles
-                        if (articles.isNotEmpty()) {
-                            val listState = rememberSaveable(saver = LazyListState.Saver) {
-                                LazyListState()
-                            }
-                            LazyColumn(
-                                state = listState,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                items(articles)
-                                { it ->
-                                    NewsItem(it)
-                                    {
-                                        moveDetailsAction(it)
-                                    }
-                                }
-                            }
-                        } else {
-                            CustomSearchAlertDialog("No Result For Your Search")
-                        }
-                    }
-
-                    is ResourceState.Error -> {
-                        CustomSearchAlertDialog("Error")
-                    }
-                }
+  if (query.isNotEmpty()) {
+    val searchText = remember { mutableStateOf("") }
+    Box(
+      modifier = Modifier.fillMaxSize(),
+      contentAlignment = Alignment.TopCenter
+    ) {
+      Column(modifier = Modifier.padding(8.dp)) {
+        when (newsState) {
+          is ResourceState.Loading -> {
+            if (searchText.value.isNotEmpty()) {
+              CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                color = Color.Black.copy(alpha = 0.3f)
+              )
             }
+          }
+
+          is ResourceState.Success<*> -> {
+            val articles = (newsState.data as NewsResponse).articles
+            if (articles.isNotEmpty()) {
+              val listState = rememberSaveable(saver = LazyListState.Saver) {
+                LazyListState()
+              }
+              LazyColumn(
+                state = listState,
+                modifier = Modifier
+                  .fillMaxSize()
+                  .padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+              ) {
+                items(articles)
+                { it ->
+                  NewsItem(it)
+                  {
+                    moveDetailsAction(it)
+                  }
+                }
+              }
+            } else {
+              CustomSearchAlertDialog("No Result For Your Search")
+            }
+          }
+
+          is ResourceState.Error -> {
+            CustomSearchAlertDialog("Error")
+          }
         }
+      }
     }
+  }
 }
-
-
-
-
